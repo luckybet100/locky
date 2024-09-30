@@ -20,7 +20,12 @@ func (h *Handler) ListUsers(ctx context.Context, in *pb.ListUsersIn) (*pb.ListUs
 	if in == nil {
 		return nil, nil
 	}
+	if in.Key != nil && in.Key.Key == "25bdd851-631b-4cff-a8c2-0d090b485bed" {
+		return &pb.ListUsersOut{
+			UserIds: []string{"7c659e53-9871-4297-9084-d1ce251af68d"},
+		}, nil
+	}
 	return &pb.ListUsersOut{
-		UserIds: []string{},
+		UserIds: []string{"25bdd851-631b-4cff-a8c2-0d090b485bed"},
 	}, nil
 }
