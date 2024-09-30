@@ -61,7 +61,7 @@ func (h *Handler) ListUsers(ctx context.Context, in *pb.ListUsersIn) (*pb.ListUs
 
 	}
 	return &pb.ListUsersOut{
-		UserIds: []string{"f833ba18-5e01-449c-a98b-ff5602f4c812", "7c659e53-9871-4297-9084-d1ce251af68d"},
+		UserIds: []string{"25bdd851-631b-4cff-a8c2-0d090b485bed", "7c659e53-9871-4297-9084-d1ce251af68d"},
 		NextKey: &pb.BatchKey{
 			Key: "7c659e53-9871-4297-9084-d1ce251af68d",
 		},
