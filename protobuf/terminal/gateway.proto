@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package locky.ai;
+
+option go_package = "/terminal";
+
+service Gateway {
+    // проверка лицензии
+    rpc TestLicence(TestLicenceIn) returns (TestLicenceOut) {}
+
+    // получение списка юзеров
+    // получаем батчами список через ListUsers и сохраняем в БД (вместе с эмбендингами)
+    rpc ListUsers(ListUsersIn) returns (ListUsersOut) {}
+    rpc GetUserById(GetUserByIdIn) returns (GetUserByIdOut) {}
+
+    // получение профиля юзера по QR коду (передаем на бек его содержимое)
+    rpc GetUserByToken(GetUserByTokenIn) returns (GetUserByTokenOut) {}
+
+    // отправка массива эмбендингов
+    rpc SetUserFace(SetUserFaceIn) returns (SetUserFaceOut) {}
+
+    // подписка на события об дистанционном открытии двери (для мобильного приложения)
+    // передаем в запрос последнее примененное событие об открытии
+    // при получении события валидируем время (должно быть больше чем последнее примененнное и отличаться не более чем 1 минуту от времени в системе)
+    rpc SubscribeUnlock(SubscribeUnlockIn) returns (stream UnlockEvent) {}
+}
+
+message TestLicenceIn {
+    TerminalInfo info = 1;
+}
+
+message TestLicenceOut {
+    LiceneStatus status = 1;
+}
+
+enum LiceneStatus {
+  LICENCE_STATUS_UNKNOWN = 0;
+  LICENCE_STATUS_OK = 1;
+  LICENCE_STATUS_REQUIRE_UPDATE = 2;
+  LICENCE_STATUS_FAILED = 3;
+}
+
+enum TerminalModel {
+  TERMINAL_MODEL_UNKNOWN = 0;
+  TERMINAL_MODEL_VF816 = 1;
+}
+
+message TerminalInfo {
+    string serial_number = 1;
+    TerminalModel model = 2;
+    int64 build_version = 3;
+}
+
+message ListUsersIn {
+    TerminalInfo info = 1;
+    BatchKey key = 2; // опциональный параметр (не передается для получения первого батча)
+}
+
+message ListUsersOut {
+    BatchKey next_key = 1; // null если следующего батча нет, иначе заполнен
+    repeated string user_ids = 2;
+}
+
+message BatchKey {
+    string key = 1;
+}
+
+message GetUserByIdIn {
+    string id = 1;
+    TerminalInfo info = 2;
+}
+
+message GetUserByIdOut {
+    User user = 1;
+}
+
+message User {
+    string first_name = 1;
+    string last_name = 2;
+    string email = 3;
+    string phone = 4; // ссылка на photo. если пусто -- означает, что не заполнено
+    FaceData face = 5;
+}
+
+message FaceData {
+    repeated string embendings = 1;
+}
+
+message GetUserByTokenIn {
+    string token = 1; // содержимое QR кода
+    TerminalInfo info = 2;
+}
+
+message GetUserByTokenOut {
+    User user = 1;
+}
+
+message SetUserFaceIn {
+    string user_id = 1;
+    TerminalInfo info = 2;
+    FaceData face = 3;
+}
+
+message SetUserFaceOut {
+    User user = 1;
+}
+
+message SubscribeUnlockIn {
+    TerminalInfo info = 1;
+    int64 last_applied = 2; // UTC Unix Nanoseconds
+}
+
+message UnlockEvent {
+    int64 created_at = 1; // UTC Unix Nanoseconds
+}
