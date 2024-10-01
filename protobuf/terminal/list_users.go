@@ -36,6 +36,11 @@ var users = map[string]*pb.User{
 		FirstName: "Polina",
 		LastName:  "Romanchenko",
 	},
+	"aec366b3-12b6-48e5-9175-134ba7bceff3": &pb.User{
+		Id:        "aec366b3-12b6-48e5-9175-134ba7bceff3",
+		FirstName: "Jo",
+		LastName:  "",
+	},
 }
 
 func (h *Handler) ListUsers(ctx context.Context, in *pb.ListUsersIn) (*pb.ListUsersOut, error) {
@@ -53,7 +58,7 @@ func (h *Handler) ListUsers(ctx context.Context, in *pb.ListUsersIn) (*pb.ListUs
 			}, nil
 		case "784fc6d5-5fdd-4b90-baee-71df6caa4c59":
 			return &pb.ListUsersOut{
-				UserIds: []string{"f833ba18-5e01-449c-a98b-ff5602f4c812", "73878c88-a90d-451d-bfe5-2572acc8f5f6"},
+				UserIds: []string{"f833ba18-5e01-449c-a98b-ff5602f4c812", "73878c88-a90d-451d-bfe5-2572acc8f5f6", "aec366b3-12b6-48e5-9175-134ba7bceff3"},
 			}, nil
 		default:
 			return nil, nil
